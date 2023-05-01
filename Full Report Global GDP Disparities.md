@@ -1,6 +1,6 @@
 Works
 
-# Project Title: Analyzing & Visualizing Global GDP
+# Project Title: Global GDP Disparities: Analyzing & Visualizing Country-Level Data
 
 I. Introduction 
 
