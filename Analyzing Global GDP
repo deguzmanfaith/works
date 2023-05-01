@@ -1,0 +1,91 @@
+-- Analyzing Global GDP per capita
+
+
+CREATE TABLE country_gdp 
+(
+    Rank	NUMERIC,
+    "ID"	NUMERIC,
+    Country	VARCHAR,
+    Continent	VARCHAR,
+    Population	NUMERIC,
+    IMF_GDP	VARCHAR,
+    UN_GDP	NUMERIC,
+    GDP_per_capita	NUMERIC
+);
+
+
+-- Shows the table
+SELECT * FROM country_gdp
+
+
+ -- Which are the Top 5 countries with the highest GDP per capita)
+SELECT country, gdp_per_capita
+FROM country_gdp
+ORDER BY gdp_per_capita DESC
+LIMIT 5;
+
+
+-- Which are Least Performing Countries in terms of GDP per capita)
+SELECT country, gdp_per_capita, continent
+FROM country_gdp
+ORDER BY gdp_per_capita ASC
+LIMIT 5; 
+
+
+-- Average GDP per capita per continent Highest to Lowest
+SELECT continent, ROUND(AVG(gdp_per_capita), 2) AS avg_gdp_per_capita
+FROM country_gdp
+GROUP BY continent
+ORDER BY avg_gdp_per_capita DESC;
+
+
+-- Comparing the GDP values of IMF and UN reports. 
+-- By grouping the results by country and listing each values to show comparison provided by the two sources.
+-- To show consistency between the two sources.
+SELECT Country, IMF_GDP, UN_GDP
+FROM country_gdp
+WHERE IMF_GDP IS NOT NULL AND UN_GDP IS NOT NULL
+GROUP BY Country, IMF_GDP, UN_GDP
+ORDER BY Country ASC; 
+
+
+-- Shows countries performing in a median value
+SELECT Country, GDP_per_capita
+FROM country_gdp
+WHERE GDP_per_capita >= (SELECT AVG(GDP_per_capita) FROM country_gdp)
+ORDER BY GDP_per_capita ASC
+LIMIT 5;
+
+
+-- Shows countries that are performing within one standard deviation from the mean
+SELECT Country, GDP_per_capita
+FROM country_gdp
+WHERE GDP_per_capita BETWEEN 
+    (SELECT AVG(GDP_per_capita) - STDDEV(GDP_per_capita) 
+     FROM country_gdp) 
+    AND 
+    (SELECT AVG(GDP_per_capita) + STDDEV(GDP_per_capita) 
+     FROM country_gdp)
+ORDER BY GDP_per_capita DESC;
+
+
+-- Shows the country that's GDP per capita is performing closest to the mean
+SELECT Country, GDP_per_capita
+FROM country_gdp
+ORDER BY ABS(GDP_per_capita - (SELECT AVG(GDP_per_capita) FROM country_gdp)) ASC
+LIMIT 1;
+
+
+-- Shows top countries in Asia
+SELECT Country, GDP_per_capita
+FROM country_gdp
+WHERE Continent = 'Asia'
+ORDER BY GDP_per_capita DESC
+LIMIT 5; -- 
+
+-- Shows the lowest gdp per capita in Asia
+SELECT Country, GDP_per_capita
+FROM country_gdp
+WHERE Continent = 'Asia'
+ORDER BY GDP_per_capita ASC
+LIMIT 5; 
